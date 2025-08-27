@@ -26,6 +26,7 @@
       background: #9152f8;
       color: white;
       transition: transform 0.2s, opacity 0.3s;
+      margin-top: 10px;
     }
 
     button:hover {
@@ -33,7 +34,6 @@
       opacity: 0.9;
     }
 
-    /* Loader animation */
     #loading {
       margin-top: 30px;
       display: none;
@@ -53,37 +53,72 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    #fallback {
+      margin-top: 20px;
+      display: none;
+      color: #f54242;
+    }
   </style>
 </head>
 <body>
   <h1>ShadowHub Joiner</h1>
   <p>Click the button below to join the Roblox server.</p>
 
-  <button onclick="join()">🚀 Join Roblox</button>
+  <button id="joinBtn">🚀 Join Roblox</button>
 
   <div id="loading">
     <div class="spinner"></div>
     <p>🔗 Connecting to ShadowHub...<br>Preparing teleport to the server...</p>
   </div>
 
+  <div id="fallback">
+    ⚠️ If Roblox didn't open automatically, copy this link:<br>
+    <input type="text" id="robloxLink" style="width: 300px; text-align: center;" readonly>
+    <button onclick="copyLink()">Copy Link</button>
+  </div>
+
   <script>
-    function join() {
+    const joinBtn = document.getElementById("joinBtn");
+    const loadingDiv = document.getElementById("loading");
+    const fallbackDiv = document.getElementById("fallback");
+    const robloxLinkInput = document.getElementById("robloxLink");
+
+    function copyLink() {
+      robloxLinkInput.select();
+      navigator.clipboard.writeText(robloxLinkInput.value).then(() => {
+        alert("Link copied to clipboard!");
+      });
+    }
+
+    joinBtn.addEventListener("click", () => {
       const params = new URLSearchParams(window.location.search);
       const placeId = params.get('placeId');
       const gameInstanceId = params.get('gameInstanceId');
 
-      if (placeId && gameInstanceId) {
-        // Show animation
-        document.getElementById("loading").style.display = "block";
-
-        // Small delay for the loading effect
-        setTimeout(() => {
-          window.location.href = `roblox://placeID=${placeId}&gameInstanceId=${gameInstanceId}`;
-        }, 2000);
-      } else {
+      if (!placeId || !gameInstanceId) {
         alert("⚠️ Missing parameters: placeId or gameInstanceId.");
+        return;
       }
-    }
+
+      // Show loader
+      loadingDiv.style.display = "block";
+
+      // Roblox protocol link
+      const robloxLink = `roblox://placeID=${placeId}&gameInstanceId=${gameInstanceId}`;
+      robloxLinkInput.value = robloxLink;
+
+      // Delay to show loader
+      setTimeout(() => {
+        window.location.href = robloxLink;
+
+        // Show fallback in case Roblox doesn't open
+        setTimeout(() => {
+          fallbackDiv.style.display = "block";
+        }, 2000);
+
+      }, 1500);
+    });
   </script>
 </body>
 </html>
