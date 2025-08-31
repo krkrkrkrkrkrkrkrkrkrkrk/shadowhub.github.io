@@ -1,81 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="utf-8">
-  <title>ShadowHub Auto Joiner</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 80px;
-      background: #0f0f17;
-      color: #eee;
-    }
-    h1 { color: #9152f8; font-size: 32px; }
-    .spinner {
-      border: 6px solid #222;
-      border-top: 6px solid #9152f8;
-      border-radius: 50%;
-      width: 50px; height: 50px;
-      margin: 20px auto;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    #fallback {
-      margin-top: 20px;
-      display: none;
-      color: #f54242;
-    }
-  </style>
-</head>
-<body>
-  <h1>ShadowHub Joiner</h1>
-  <p>Connecting you to the Roblox server...</p>
-
-  <div class="spinner"></div>
-  <p>🔗 Opening Roblox...</p>
-
-  <div id="fallback">
-    ⚠️ If Roblox didn’t open automatically, copy this link:<br>
-    <input type="text" id="robloxLink" style="width: 300px; text-align: center;" readonly>
-    <button onclick="copyLink()">Copy Link</button>
-  </div>
-
+  <title>Joining...</title>
   <script>
-    const fallbackDiv = document.getElementById("fallback");
-    const robloxLinkInput = document.getElementById("robloxLink");
-
-    function copyLink() {
-      robloxLinkInput.select();
-      navigator.clipboard.writeText(robloxLinkInput.value).then(() => {
-        alert("Link copied to clipboard!");
-      });
-    }
-
-    window.addEventListener("load", () => {
+    window.onload = function() {
       const params = new URLSearchParams(window.location.search);
       const placeId = params.get("placeId");
       const gameInstanceId = params.get("gameInstanceId");
-
-      if (!placeId || !gameInstanceId) {
-        alert("⚠️ Missing parameters: placeId or gameInstanceId.");
-        return;
+      if (placeId && gameInstanceId) {
+        window.location.href = `roblox://placeID=${placeId}&gameInstanceId=${gameInstanceId}`;
       }
-
-      const robloxLink = `roblox://placeID=${placeId}&gameInstanceId=${gameInstanceId}`;
-      robloxLinkInput.value = robloxLink;
-
-      // tenta abrir o Roblox automaticamente
-      window.location.href = robloxLink;
-
-      // se não abrir em 2 segundos, mostra fallback
-      setTimeout(() => {
-        fallbackDiv.style.display = "block";
-      }, 2000);
-    });
+    };
   </script>
-</body>
+</head>
+<body style="margin:0; background:#000;"></body>
 </html>
